@@ -1,0 +1,13 @@
+[package]
+name = "impl_fn"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+# Memo
+# src/main.rs             -> cargo run --bin impl_fn
+# src/bin/sub.rs          -> cargo run --bin sub
+# src/bin/main_chain.rs   -> cargo run --bin main_chain
+
+[dependencies]
