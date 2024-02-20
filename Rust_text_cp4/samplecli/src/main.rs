@@ -7,14 +7,14 @@ fn main() {
         .about("Super awesome sample RPN calculator")
         .arg(
             Arg::with_name("formula_file")
-                // .about("Formulas written in RPN")
+                .help("Formulas written in RPN")
                 .value_name("FILE")
                 .index(1)
                 .required(false),
         )
         .arg(
             Arg::with_name("verbose")
-                // .about("sets the level of verbosity")
+                .help("sets the level of verbosity")
                 .short('v')
                 .long("verbose")
                 .required(false),
