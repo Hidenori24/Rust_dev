@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{stdin, BufRead, BufReader};
 
 use clap::Parser; // change
 
@@ -10,6 +10,7 @@ use clap::Parser; // change
     author = "John Smith",
     about = "Super awesome sample RPN calclator"
 )]
+
 struct Opts {
     // Sets the level of verbosity
     #[clap(short, long)]
@@ -26,13 +27,32 @@ fn main() {
     if let Some(path) = opts.formula_file {
         let f = File::open(path).unwrap();
         let reader = BufReader::new(f);
-
-        for line in reader.lines() {
-            let line = line.unwrap();
-            println!("{}", line);
-        }
+        run(reader, opts.verbose);
     } else {
-        // ファイルを指定しなかった場合
-        println!("No file is specified");
+        let stdin = stdin();
+        let reader = stdin.lock();
+        run(reader, opts.verbose);
+    }
+}
+
+/* run機能の追加 */
+fn run<R: BufRead>(reader: R, verbose: bool) {
+    let calc = RpnCalcukator::new(verbose);
+
+    for line in reader.lines() {
+        let line = line.unwrap();
+        let answer = calc.eval(&line);
+        println!("{}", answer);
+    }
+}
+struct RpnCalcukator(bool);
+
+impl RpnCalcukator {
+    pub fn new(verbose: bool) -> Self {
+        Self(verbose)
+    }
+
+    pub fn eval(&self, formula: &str) -> i32 {
+        0
     }
 }
