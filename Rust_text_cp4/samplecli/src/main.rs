@@ -91,3 +91,31 @@ impl RpnCalcukator {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test_ok() {
+        let calc = RpnCalcukator(false);
+        // number only
+        assert_eq!(calc.eval("5"), 5);
+        assert_eq!(calc.eval("50"), 50);
+        assert_eq!(calc.eval("-5"), -5);
+
+        // fomula + numbers
+        assert_eq!(calc.eval("4 5 +"), 9);
+        assert_eq!(calc.eval("5 12 -"), -7);
+        assert_eq!(calc.eval("2 7 *"), 14);
+        assert_eq!(calc.eval("6 2 /"), 3);
+        assert_eq!(calc.eval("13 6 %"), 1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_ng() {
+        let calc = RpnCalcukator(false);
+
+        calc.eval("3 5 ^");
+    }
+}
