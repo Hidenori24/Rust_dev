@@ -1,21 +1,42 @@
-use actix_web::{get, App, HttpResponse, HttpServer};
+use actix_web::{get, App, HttpResponse, HttpServer, ResponseError};
+use askama::Template;
 use thiserror::Error;
 
-// エラーをまとめるenumを定義
-// actix_web::ResponseErrorとして使うために deriveマクロでDebugを付与している必要がある．
+struct TodoEntry {
+    id: u32,
+    text: String,
+}
+
+#[derive(Template)]
+#[template(path = "index.html")]
+struct IndexTemplate {
+    entries: Vec<TodoEntry>,
+}
+
 #[derive(Error, Debug)]
-enum MyError {}
+enum MyError {
+    #[error("Failed to render HTML")]
+    AskamaError(#[from] askama::Error),
+}
 
 impl ResponseError for MyError {}
 
-// MyErrorは RespondeErrorを実装しているので indexの戻り値に MyErrorを使える
 #[get("/")]
 async fn index() -> Result<HttpResponse, MyError> {
-    let response_body = "Hello world!";
-    // HttpResponse::Ok()はステータスコード200を持つ HttpResponseBuilder という構造体を返す
-    // HttpResponseBuilder の body()という関数にレスポンスのボディを渡すと HttpResponse が帰ってくる．
-    // 戻り値が Resultなので Ok で包む．
-    Ok(HttpResponse::Ok().body(response_body))
+    let mut entries = Vec::new();
+    entries.push(TodoEntry {
+        id: 1,
+        text: "First entry".to_string(),
+    });
+    entries.push(TodoEntry {
+        id: 2,
+        text: "Second entry".to_string(),
+    });
+    let html = IndexTemplate { entries };
+    let response_body = html.render()?;
+    Ok(HttpResponse::Ok()
+        .content_type("text/html")
+        .body(response_body))
 }
 
 #[actix_rt::main]
